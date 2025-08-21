@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Narola – Premium Footwear for Every Journey</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/lucide.js"></script>
+
+  <!-- Alpine.js -->
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+  <meta name="description" content="Discover premium shoes at Narola. Running, casual, formal and sports footwear. Free shipping & secure payments." />
+  <meta property="og:image" content="https://placehold.co/1200x630/000000/ffffff?text=Narola+Shoes" />
+
+  <style>
+    :root{
+      --accent: #6366f1; /* indigo-500 */
+      --accent-dark: #4f46e5;
+      --font-ui: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans";
+      --font-head: 'Poppins', var(--font-ui);
+    }
+    html,body { font-family: var(--font-ui); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+    h1,h2,h3,h4 { font-family: var(--font-head); }
+    .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
+    [x-cloak]{ display:none !important; }
+  </style>
+</head>
+<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100" x-data="store()" x-init="init()" x-cloak>
+
+  <!-- Announcement -->
+  <div class="bg-gray-900 text-white text-sm py-2 text-center">
+    Free shipping on orders over <span class="font-semibold" x-text="formatMoney(50)"></span> • 7-day returns • Secure payments
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 backdrop-blur bg-white/70 dark:bg-gray-900/70 border-b border-gray-200 dark:border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 lg:px-6 py-4 flex items-center justify-between">
+      <a href="#" class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Narola</a>
+
+      <!-- Nav (desktop) -->
+      <nav class="hidden lg:flex items-center gap-8">
+        <a href="#products" class="hover:text-indigo-600 dark:hover:text-indigo-400">Men</a>
+        <a href="#products" class="hover:text-indigo-600 dark:hover:text-indigo-400">Women</a>
+        <a href="#products" class="hover:text-indigo-600 dark:hover:text-indigo-400">Kids</a>
+        <a href="#products" class="hover:text-indigo-600 dark:hover:text-indigo-400">Sports</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <button type="button" @click="searchOpen = true" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800" aria-label="Search">
+          <i data-lucide="search" class="w-5 h-5"></i>
+        </button>
+
+        <a href="#" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800" aria-label="Account">
+          <i data-lucide="user" class="w-5 h-5"></i>
+        </a>
+
+        <button type="button" @click="wishlistOpen = true" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 relative" aria-label="Wishlist">
+          <i data-lucide="heart" class="w-5 h-5"></i>
+          <span x-show="wishlist.length>0" x-text="wishlist.length" class="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs w-4 h-4 rounded-full grid place-items-center"></span>
+        </button>
+
+        <button type="button" @click="cartOpen = true" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 relative" aria-label="Cart">
+          <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+          <span x-show="cart.length>0" x-text="cart.length" class="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs w-4 h-4 rounded-full grid place-items-center"></span>
+        </button>
+
+        <button type="button" @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800" aria-label="Menu">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div x-show="mobileMenuOpen" x-transition class="lg:hidden border-t border-gray-200 dark:border-gray-800">
+      <div class="max-w-7xl mx-auto px-4 py-3 grid grid-cols-2 gap-2">
+        <a href="#products" @click="mobileMenuOpen=false" class="py-2">Men</a>
+        <a href="#products" @click="mobileMenuOpen=false" class="py-2">Women</a>
+        <a href="#products" @click="mobileMenuOpen=false" class="py-2">Kids</a>
+        <a href="#products" @click="mobileMenuOpen=false" class="py-2">Sports</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="relative h-[65vh] md:h-[80vh] overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop" alt="Hero shoes" class="w-full h-full object-cover">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 max-w-7xl mx-auto px-4 lg:px-6 flex flex-col justify-center items-start text-white">
+      <h1 class="text-4xl md:text-6xl font-bold">Unleash Your Potential</h1>
+      <p class="mt-4 text-base md:text-lg max-w-xl">Performance footwear engineered for comfort and speed. Fresh drops weekly.</p>
+      <div class="mt-6 flex gap-3">
+        <a href="#products" class="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-md font-semibold">Shop New Arrivals</a>
+        <a href="#products" class="bg-white/20 hover:bg-white/30 px-6 py-3 rounded-md font-semibold">Explore Collection</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- USP -->
+  <section class="bg-gray-50 dark:bg-gray-800 py-10">
+    <div class="max-w-7xl mx-auto px-4 lg:px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div>
+        <i data-lucide="truck" class="w-7 h-7 text-indigo-600 mx-auto mb-2"></i>
+        <h3 class="font-semibold">Free Shipping</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-300">Over <span x-text="formatMoney(50)"></span></p>
+      </div>
+      <div>
+        <i data-lucide="headphones" class="w-7 h-7 text-indigo-600 mx-auto mb-2"></i>
+        <h3 class="font-semibold">24/7 Support</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-300">We're here to help</p>
+      </div>
+      <div>
+        <i data-lucide="shield-check" class="w-7 h-7 text-indigo-600 mx-auto mb-2"></i>
+        <h3 class="font-semibold">Secure Payments</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-300">SSL encrypted</p>
+      </div>
+      <div>
+        <i data-lucide="credit-card" class="w-7 h-7 text-indigo-600 mx-auto mb-2"></i>
+        <h3 class="font-semibold">COD</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-300">Available</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS w/ filters -->
+  <section id="products" class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 lg:px-6">
+      <div class="flex items-end justify-between mb-8">
+        <h2 class="text-3xl font-bold">Our Collection</h2>
+        <a href="#" class="text-sm font-medium hover:underline">View all</a>
+      </div>
+
+      <!-- Filters -->
+      <div class="mb-8 grid gap-4 md:grid-cols-2">
+        <div>
+          <h3 class="font-semibold mb-2">Gender</h3>
+          <div class="flex flex-wrap gap-2">
+            <button @click="activeGender='All'" :class="{'bg-indigo-600 text-white': activeGender==='All','bg-gray-200 dark:bg-gray-800': activeGender!=='All'}" class="px-4 py-2 rounded-lg">All</button>
+            <button @click="activeGender='Men'" :class="{'bg-indigo-600 text-white': activeGender==='Men','bg-gray-200 dark:bg-gray-800': activeGender!=='Men'}" class="px-4 py-2 rounded-lg">Men</button>
+            <button @click="activeGender='Women'" :class="{'bg-indigo-600 text-white': activeGender==='Women','bg-gray-200 dark:bg-gray-800': activeGender!=='Women'}" class="px-4 py-2 rounded-lg">Women</button>
+            <button @click="activeGender='Kids'" :class="{'bg-indigo-600 text-white': activeGender==='Kids','bg-gray-200 dark:bg-gray-800': activeGender!=='Kids'}" class="px-4 py-2 rounded-lg">Kids</button>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-semibold mb-2">Category</h3>
+          <div class="flex flex-wrap gap-2">
+            <button @click="activeCategory='All'" :class="{'bg-indigo-600 text-white': activeCategory==='All','bg-gray-200 dark:bg-gray-800': activeCategory!=='All'}" class="px-4 py-2 rounded-lg">All</button>
+            <button @click="activeCategory='Running'" :class="{'bg-indigo-600 text-white': activeCategory==='Running','bg-gray-200 dark:bg-gray-800': activeCategory!=='Running'}" class="px-4 py-2 rounded-lg">Running</button>
+            <button @click="activeCategory='Sneakers'" :class="{'bg-indigo-600 text-white': activeCategory==='Sneakers','bg-gray-200 dark:bg-gray-800': activeCategory!=='Sneakers'}" class="px-4 py-2 rounded-lg">Sneakers</button>
+            <button @click="activeCategory='Formal'" :class="{'bg-indigo-600 text-white': activeCategory==='Formal','bg-gray-200 dark:bg-gray-800': activeCategory!=='Formal'}" class="px-4 py-2 rounded-lg">Formal</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <template x-for="product in filteredProducts" :key="product.id">
+          <article @mouseenter="if($refs.v) { $refs.v.currentTime = 0; $refs.v.play(); setTimeout(() => { if($refs.v) $refs.v.pause() }, 3000) }" @mouseleave="if($refs.v) { $refs.v.pause(); $refs.v.currentTime = 0; }" class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow group">
+            <div class="relative">
+              <img :src="product.images[0]" :alt="product.name" class="w-full h-64 object-cover transition-opacity duration-500 group-hover:opacity-0" loading="lazy">
+              <!-- video plays on hover (muted) -->
+              <video x-ref="v" :src="product.video" class="absolute inset-0 w-full h-64 object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500" playsinline muted></video>
+
+              <div class="absolute top-3 left-3 flex flex-col gap-1">
+                <span x-show="product.isNew" class="bg-indigo-600 text-white text-xs px-2 py-1 rounded">New</span>
+                <span x-show="product.discountPercent" class="bg-red-500 text-white text-xs px-2 py-1 rounded" x-text="`-${product.discountPercent}%`"></span>
+              </div>
+
+              <button @click="toggleWishlist(product.id)" type="button" class="absolute top-3 right-3 p-2 bg-white/80 dark:bg-gray-900/70 rounded-full hover:bg-white" :aria-pressed="isInWishlist(product.id)">
+                <i data-lucide="heart" class="w-5 h-5" :class="isInWishlist(product.id) ? 'text-red-500' : ''"></i>
+              </button>
+            </div>
+
+            <div class="p-4">
+              <h3 class="font-semibold truncate" x-text="product.name"></h3>
+              <div class="flex items-center justify-between mt-2">
+                <p>
+                  <span class="font-bold text-lg text-indigo-600" x-text="formatMoney(discounted(product))"></span>
+                  <span x-show="product.discountPercent" class="line-through text-gray-500 text-sm ml-2" x-text="formatMoney(product.price)"></span>
+                </p>
+                <div class="flex items-center" aria-label="Rating">
+                  <i data-lucide="star" class="w-4 h-4 text-yellow-400"></i>
+                  <span class="text-sm ml-1" x-text="product.rating.toFixed(1)"></span>
+                </div>
+              </div>
+              
+              <!-- Gemini Features -->
+              <div class="mt-3 text-sm text-gray-600 dark:text-gray-300 space-y-2 min-h-[60px]">
+                  <p x-show="product.description" x-text="product.description"></p>
+                  <p x-show="product.outfit" x-text="product.outfit"></p>
+                  <div x-show="loadingId === product.id" class="flex items-center gap-2 text-gray-500">
+                      <i data-lucide="loader" class="w-4 h-4 animate-spin"></i>
+                      <span>Generating...</span>
+                  </div>
+              </div>
+              
+              <div class="mt-2 grid grid-cols-2 gap-2">
+                  <button @click="describe(product)" :disabled="loadingId" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50">✨ Describe</button>
+                  <button @click="styleMe(product)" :disabled="loadingId" class="w-full bg-purple-600 text-white py-2 rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50">✨ Style Me</button>
+              </div>
+
+              <div class="mt-3 grid gap-2">
+                <button @click="addToCart(product)" class="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700">Add to Cart</button>
+                <button @click="openQuickView(product)" class="w-full border border-gray-300 dark:border-gray-700 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">Quick View</button>
+              </div>
+            </div>
+          </article>
+        </template>
+      </div>
+
+      <!-- Reviews (user-submitted) -->
+      <div class="mt-12">
+        <h3 class="text-2xl font-bold mb-4">Reviews</h3>
+        <div class="grid gap-4 md:grid-cols-2">
+          <template x-for="r in reviews" :key="r.id">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 grid place-items-center text-sm font-semibold" x-text="r.name.charAt(0)"></div>
+                <div>
+                  <div class="font-semibold" x-text="r.name"></div>
+                  <div class="text-xs text-gray-500" x-text="r.date"></div>
+                </div>
+              </div>
+              <p class="mt-3 text-gray-700 dark:text-gray-300" x-text="r.text"></p>
+            </div>
+          </template>
+          <div x-show="reviews.length===0" class="text-gray-500">No reviews yet — be the first to submit one after checkout.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials carousel -->
+  <section class="bg-gray-50 dark:bg-gray-800 py-16">
+    <div class="max-w-7xl mx-auto px-4 lg:px-6">
+      <h2 class="text-3xl font-bold text-center mb-8">What Our Customers Say</h2>
+      <div class="overflow-x-auto no-scrollbar flex gap-6 pb-4 snap-x snap-mandatory">
+        <template x-for="t in testimonials" :key="t.name">
+          <div class="flex-shrink-0 w-80 snap-start bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+            <div class="flex items-center gap-3 mb-3">
+              <img :src="t.avatar" :alt="t.name" class="w-12 h-12 rounded-full object-cover">
+              <div>
+                <div class="font-semibold" x-text="t.name"></div>
+                <div class="text-xs text-gray-500" x-text="t.location"></div>
+              </div>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300" x-text="t.quote"></p>
+          </div>
+        </template>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-950 text-white">
+    <div class="max-w-7xl mx-auto px-4 lg:px-6 py-16">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="col-span-2">
+          <h3 class="text-xl font-bold">Narola</h3>
+          <p class="text-gray-400 mt-3 max-w-sm">Premium footwear for every journey. Designed for comfort, crafted for style.</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-3">Shop</h4>
+          <ul class="space-y-2 text-gray-300">
+            <li><a href="#products" class="hover:underline">Men</a></li>
+            <li><a href="#products" class="hover:underline">Women</a></li>
+            <li><a href="#products" class="hover:underline">Kids</a></li>
+            <li><a href="#products" class="hover:underline">Sports</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-3">Company</h4>
+          <ul class="space-y-2 text-gray-300">
+            <li><a href="#" class="hover:underline">About</a></li>
+            <li><a href="#" class="hover:underline">Careers</a></li>
+            <li><a href="#" class="hover:underline">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-10 border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400 gap-3">
+        <p>&copy; <span x-text="new Date().getFullYear()"></span> Narola. All rights reserved.</p>
+        <div class="flex gap-4">
+          <a href="#" aria-label="Instagram"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+          <a href="#" aria-label="Twitter"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+          <a href="#" aria-label="Facebook"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Search Modal -->
+  <div x-show="searchOpen" x-transition.opacity class="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4" @keydown.escape.window="searchOpen=false">
+    <div class="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-xl p-4" @click.away="searchOpen=false">
+      <div class="flex items-center gap-3">
+        <i data-lucide="search" class="w-5 h-5"></i>
+        <input type="search" placeholder="Search shoes…" class="flex-1 bg-transparent outline-none py-2" x-model="query" @keydown.enter.prevent="performSearch">
+        <button class="text-sm px-3 py-1 border rounded-md" @click="searchOpen=false">Close</button>
+      </div>
+
+      <div class="mt-4 max-h-64 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800">
+        <template x-for="p in searchResults" :key="p.id">
+          <a href="#" class="flex items-center gap-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 px-2 rounded">
+            <img :src="p.images[0]" class="w-12 h-12 rounded object-cover" :alt="p.name">
+            <div class="flex-1">
+              <p class="font-medium" x-text="p.name"></p>
+              <p class="text-sm text-gray-500" x-text="formatMoney(discounted(p))"></p>
+            </div>
+            <button @click.prevent="openQuickView(p)" class="text-sm text-indigo-600">Quick view</button>
+          </a>
+        </template>
+        <div x-show="searchResults.length===0" class="text-sm text-gray-500 p-2">No results.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick View -->
+  <div x-show="quickViewOpen" x-transition.opacity class="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4" @keydown.escape.window="quickViewOpen=false">
+    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6" @click.away="quickViewOpen=false">
+      <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-900" @click="quickViewOpen=false"><i data-lucide="x" class="w-6 h-6"></i></button>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <img :src="selectedProduct?.images[0]" :alt="selectedProduct?.name" class="w-full rounded-lg object-cover">
+          <div class="mt-3 flex gap-2">
+            <template x-for="(img, idx) in selectedProduct?.images || []" :key="idx">
+              <img :src="img" class="w-20 h-20 rounded-md object-cover" :alt="`thumb-${idx}`">
+            </template>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-2xl font-bold mb-2" x-text="selectedProduct?.name"></h2>
+          <div class="flex items-center gap-3 mb-4">
+            <i data-lucide="star" class="w-5 h-5 text-yellow-400"></i>
+            <div class="font-medium" x-text="selectedProduct ? selectedProduct.rating.toFixed(1) : ''"></div>
+          </div>
+
+          <div class="text-3xl font-bold text-indigo-600 mb-4" x-text="selectedProduct ? formatMoney(discounted(selectedProduct)) : ''"></div>
+
+          <p class="text-gray-700 dark:text-gray-300 mb-4" x-text="selectedProduct?.description || 'High quality construction with comfort-first design.'"></p>
+
+          <div class="grid gap-3">
+            <button class="bg-indigo-600 text-white py-3 rounded-lg" @click="addToCart(selectedProduct); quickViewOpen=false">Add to Cart</button>
+            <button class="border border-gray-300 py-3 rounded-lg" @click="quickViewOpen=false">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Drawer -->
+  <div x-show="cartOpen" class="fixed inset-0 z-50" aria-modal="true" role="dialog" @keydown.escape.window="cartOpen=false">
+    <div class="absolute inset-0 bg-black/50" @click="cartOpen=false"></div>
+
+    <aside x-show="cartOpen" x-transition:enter="transition transform duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition transform duration-300" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="relative bg-white dark:bg-gray-900 w-full max-w-sm h-full ml-auto p-6 overflow-y-auto">
+      <button class="absolute top-4 right-4" @click="cartOpen=false"><i data-lucide="x" class="w-6 h-6"></i></button>
+      <h2 class="text-2xl font-bold mb-6">Shopping Cart</h2>
+
+      <div x-show="cart.length===0" class="text-center text-gray-500">Your cart is empty.</div>
+
+      <div x-show="cart.length>0" class="space-y-4">
+        <template x-for="(item, idx) in cart" :key="item.id + '-' + idx">
+          <div class="flex items-center gap-4">
+            <img :src="item.images[0]" class="w-20 h-20 rounded object-cover">
+            <div class="flex-1">
+              <div class="font-semibold" x-text="item.name"></div>
+              <div class="text-indigo-600" x-text="formatMoney(discounted(item))"></div>
+            </div>
+            <button class="text-sm text-red-600" @click="removeFromCart(idx)">Remove</button>
+          </div>
+        </template>
+
+        <div class="mt-6 border-t pt-4">
+          <div class="flex justify-between font-bold text-lg mb-3">
+            <span>Total</span>
+            <span x-text="formatMoney(cartTotal)"></span>
+          </div>
+          <button class="w-full bg-indigo-600 text-white py-3 rounded-lg" @click="proceedToShipping()">Checkout</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Wishlist modal -->
+  <div x-show="wishlistOpen" x-transition.opacity class="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4" @keydown.escape.window="wishlistOpen=false">
+    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-4xl p-6" @click.away="wishlistOpen=false">
+      <button class="absolute top-4 right-4" @click="wishlistOpen=false"><i data-lucide="x" class="w-6 h-6"></i></button>
+      <h2 class="text-2xl font-bold mb-4">My Wishlist</h2>
+      <div x-show="wishlist.length===0" class="text-gray-500">No items in wishlist.</div>
+      <div x-show="wishlist.length>0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <template x-for="id in wishlist" :key="'w-'+id">
+          <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center gap-4">
+            <img :src="byId(id).images[0]" class="w-24 h-24 object-cover rounded">
+            <div class="flex-1">
+              <div class="font-semibold" x-text="byId(id).name"></div>
+              <div class="text-indigo-600" x-text="formatMoney(discounted(byId(id)))"></div>
+              <div class="mt-2 flex gap-2">
+                <button @click="addToCart(byId(id)); toggleWishlist(id)" class="text-sm underline">Add to cart</button>
+                <button @click="toggleWishlist(id)" class="text-sm text-red-600">Remove</button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shipping / Review simulated flow (modal) -->
+  <div x-show="checkoutState !== 'closed'" x-transition.opacity class="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4" @keydown.escape.window="checkoutState='closed'">
+    <!-- Processing -->
+    <div x-show="checkoutState === 'processing'" class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md p-6 text-center">
+      <div class="mb-4">
+        <i data-lucide="loader" class="w-12 h-12 animate-spin text-indigo-600"></i>
+      </div>
+      <h3 class="text-xl font-bold">Processing your order...</h3>
+      <p class="text-gray-600 mt-2">We are preparing your shipment — you will be redirected to the review page shortly.</p>
+    </div>
+
+    <!-- Shipping form -->
+    <div x-show="checkoutState === 'shipping'" class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md p-6" @click.away="checkoutState='closed'">
+      <h2 class="text-2xl font-bold mb-4">Shipping Details</h2>
+      <form @submit.prevent="submitShipping">
+        <div class="space-y-3">
+          <input x-model="shipping.name" type="text" placeholder="Full Name" required class="w-full rounded-lg border-gray-300 dark:border-gray-700 px-3 py-2">
+          <input x-model="shipping.email" type="email" placeholder="Email Address" required class="w-full rounded-lg border-gray-300 dark:border-gray-700 px-3 py-2">
+          <textarea x-model="shipping.address" rows="3" placeholder="Shipping Address" required class="w-full rounded-lg border-gray-300 dark:border-gray-700 px-3 py-2"></textarea>
+
+          <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg">Proceed</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Review page -->
+    <div x-show="checkoutState === 'review'" class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md p-6 text-center" @click.away="checkoutState='closed'">
+      <i data-lucide="check-circle" class="w-16 h-16 text-green-500 mx-auto mb-4"></i>
+      <h2 class="text-2xl font-bold">Order Placed!</h2>
+      <p class="text-gray-600 mt-2">Thanks for your purchase. Would you like to leave a review?</p>
+
+      <form @submit.prevent="submitReview" class="mt-4">
+        <textarea x-model="reviewText" rows="4" placeholder="Share your experience..." class="w-full rounded-lg border-gray-300 dark:border-gray-700 px-3 py-2 mb-3"></textarea>
+        <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg">Submit Review</button>
+        <button type="button" class="w-full mt-2 text-sm text-gray-500" @click="checkoutState='closed'">Maybe later</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Back to top -->
+  <button x-show="scrolled" @click="window.scrollTo({top:0,behavior:'smooth'})" class="fixed bottom-6 right-6 p-3 bg-indigo-600 text-white rounded-full shadow-lg">
+    <i data-lucide="arrow-up" class="w-6 h-6"></i>
+  </button>
+
+  <!-- Cookie -->
+  <div x-show="!cookiesAccepted" x-transition class="fixed bottom-0 inset-x-0 bg-gray-900/95 text-white p-4 flex flex-col md:flex-row justify-between items-center gap-3 z-50">
+    <p class="text-sm">We use cookies to enhance your experience. <a href="#" class="underline">Learn more</a>.</p>
+    <div class="flex gap-2">
+      <button @click="acceptCookies" class="bg-indigo-600 text-white px-4 py-2 rounded">Accept</button>
+    </div>
+  </div>
+
+  <!-- Alpine store -->
+  <script>
+    function store(){
+      const mockProducts = [
+        { id:1, name:'AeroGlide Pro Runner', price:150, rating:4.8, images:['https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200&auto=format&fit=crop'], video:'https://cdn.pixabay.com/video/2019/09/20/28079-361858193_large.mp4', isNew:true, discountPercent:10, category:'Running', gender:'Men', description: '', outfit: '' },
+        { id:2, name:'Urban Stride Sneaker', price:120, rating:4.7, images:['https://images.unsplash.com/photo-1543508282-6319a3e2621f?q=80&w=1200&auto=format&fit=crop'], video:'https://cdn.pixabay.com/video/2023/10/10/184281-874136949_large.mp4', isNew:false, discountPercent:0, category:'Sneakers', gender:'Women', description: '', outfit: '' },
+        { id:3, name:'TrailRidge Hiker', price:180, rating:4.6, images:['https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop'], video:'https://cdn.pixabay.com/video/2019/09/20/28079-361858193_large.mp4', isNew:true, discountPercent:15, category:'Running', gender:'Men', description: '', outfit: '' },
+        { id:4, name:'Classic Oxford Leather', price:200, rating:4.9, images:['https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=1200&auto=format&fit=crop'], video:'https://cdn.pixabay.com/video/2023/10/10/184281-874136949_large.mp4', isNew:false, discountPercent:5, category:'Formal', gender:'Women', description: '', outfit: '' },
+        { id:5, name:'Kids Sparkle Runner', price:80, rating:4.5, images:['https://images.unsplash.com/photo-1511556820780-98ba48b75a1d?q=80&w=1200&auto=format&fit=crop'], video:'https://cdn.pixabay.com/video/2019/09/20/28079-361858193_large.mp4', isNew:true, discountPercent:0, category:'Running', gender:'Kids', description: '', outfit: '' },
+        { id:6, name:"Men's Court Sneaker", price:130, rating:4.8, images:['https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?q=80&w=1200&auto=format&fit=crop'], video:'https://cdn.pixabay.com/video/2023/10/10/184281-874136949_large.mp4', isNew:false, discountPercent:20, category:'Sneakers', gender:'Men', description: '', outfit: '' }
+      ];
+
+      const mockTestimonials = [
+        { name:'Alex Johnson', location:'New York, USA', avatar:'https://randomuser.me/api/portraits/men/32.jpg', quote:"The AeroGlide runners are the most comfortable shoes I've owned." },
+        { name:'Priya Sharma', location:'Mumbai, India', avatar:'https://randomuser.me/api/portraits/women/44.jpg', quote:'Stylish and comfortable — I wear them every day.' },
+        { name:'David Lee', location:'London, UK', avatar:'https://randomuser.me/api/portraits/men/62.jpg', quote:'Great quality and swift shipping.' }
+      ];
+
+      return {
+        // state
+        products: mockProducts,
+        testimonials: mockTestimonials,
+        cart: [],
+        wishlist: [],
+        searchOpen: false,
+        cartOpen: false,
+        mobileMenuOpen: false,
+        wishlistOpen: false,
+        quickViewOpen: false,
+        selectedProduct: null,
+        scrolled: false,
+        cookiesAccepted: false,
+        query: '',
+        activeCategory: 'All',
+        activeGender: 'All',
+        checkoutState: 'closed', // closed | shipping | processing | review
+        shipping: { name:'', email:'', address:'' },
+        reviewText: '',
+        reviews: [],
+        loadingId: null, // To track which product is loading a Gemini response
+
+        // geo/localization
+        geo: { country:'India', currency:'INR', flag:'🇮🇳', locale:'en-IN' },
+
+        // init
+        init(){
+          if(window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+          window.addEventListener('scroll', () => { this.scrolled = window.scrollY > 300; });
+          this.cookiesAccepted = localStorage.getItem('cookiesAccepted') === 'true';
+          try {
+            const lang = navigator.language || navigator.userLanguage || 'en-IN';
+            if(lang.includes('IN')) this.geo = { country:'India', currency:'INR', flag:'🇮🇳', locale:'en-IN' };
+            else if(lang.includes('US')) this.geo = { country:'USA', currency:'USD', flag:'🇺🇸', locale:'en-US' };
+            else if(lang.includes('GB')) this.geo = { country:'UK', currency:'GBP', flag:'🇬🇧', locale:'en-GB' };
+          } catch(e) { /* ignore */ }
+        },
+
+        // helpers
+        byId(id){ return this.products.find(p => p.id === id); },
+        discounted(p){ if(!p) return 0; const d = (p.discountPercent||0)/100; return +(p.price*(1-d)).toFixed(2); },
+        get cartTotal(){ return this.cart.reduce((t,i) => t + this.discounted(i), 0); },
+        formatMoney(v){
+          try { return new Intl.NumberFormat(this.geo.locale, { style:'currency', currency:this.geo.currency }).format(v); }
+          catch(e){ const symbol = this.geo.currency === 'INR' ? '₹' : (this.geo.currency==='USD'?'$': this.geo.currency+' '); return symbol + Number(v).toFixed(2); }
+        },
+
+        // search & filters
+        get searchResults(){ const q = this.query.trim().toLowerCase(); if(!q) return []; return this.products.filter(p => p.name.toLowerCase().includes(q)); },
+        get filteredProducts(){
+          return this.products.filter(p => {
+            const genderMatch = this.activeGender === 'All' || p.gender === this.activeGender;
+            const categoryMatch = this.activeCategory === 'All' || p.category === this.activeCategory;
+            return genderMatch && categoryMatch;
+          });
+        },
+
+        // cart & wishlist
+        addToCart(p){
+          if(!p) return;
+          this.cart.push(JSON.parse(JSON.stringify(p)));
+          this.$nextTick(() => { if(window.lucide) lucide.createIcons(); });
+        },
+        removeFromCart(index){ this.cart.splice(index,1); },
+        toggleWishlist(id){ const i = this.wishlist.indexOf(id); if(i>-1) this.wishlist.splice(i,1); else this.wishlist.push(id); },
+        isInWishlist(id){ return this.wishlist.includes(id); },
+
+        // quick view
+        openQuickView(p){
+          this.selectedProduct = p;
+          this.quickViewOpen = true;
+          this.$nextTick(() => { if(window.lucide) lucide.createIcons(); });
+        },
+
+        // cookies
+        acceptCookies(){ this.cookiesAccepted = true; localStorage.setItem('cookiesAccepted','true'); },
+
+        // checkout flow helpers
+        proceedToShipping(){
+          this.cartOpen = false;
+          this.checkoutState = 'shipping';
+        },
+        submitShipping(){
+          this.checkoutState = 'processing';
+          setTimeout(() => { this.checkoutState = 'review'; this.shipping = { name:'', email:'', address:'' }; }, 1400);
+        },
+        submitReview(){
+          if(!this.reviewText.trim()) { alert('Please write a review before submitting.'); return; }
+          const newReview = { id: Date.now(), name: 'Anonymous', date: new Date().toLocaleDateString(), text: this.reviewText.trim() };
+          this.reviews.unshift(newReview);
+          this.reviewText = '';
+          this.checkoutState = 'closed';
+          setTimeout(()=>{ alert('Thanks for your review!'); }, 200);
+        },
+        
+        // --- Gemini API Integration ---
+
+        // Generic function to call Gemini API with exponential backoff
+        async callGeminiAPI(prompt, maxRetries = 3) {
+            const apiKey = ""; // API key is handled by the environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+
+            let attempt = 0;
+            while (attempt < maxRetries) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error("Invalid API response structure");
+                    }
+                } catch (error) {
+                    console.error(`API call failed on attempt ${attempt + 1}:`, error);
+                    attempt++;
+                    if (attempt >= maxRetries) {
+                        return "Sorry, we couldn't generate a response right now.";
+                    }
+                    const delay = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
+                    await new Promise(res => setTimeout(res, delay));
+                }
+            }
+        },
+
+        // ✨ Describe Feature
+        async describe(product) {
+            if (this.loadingId) return;
+            this.loadingId = product.id;
+            product.outfit = ''; // Clear the other field
+            const prompt = `Create a captivating and detailed product description for a shoe named "${product.name}". Focus on its style, comfort, and ideal use cases. Keep it to one or two sentences.`;
+            const responseText = await this.callGeminiAPI(prompt);
+            product.description = responseText;
+            this.loadingId = null;
+        },
+
+        // ✨ Style Me Feature
+        async styleMe(product) {
+            if (this.loadingId) return;
+            this.loadingId = product.id;
+            product.description = ''; // Clear the other field
+            const prompt = `Provide a stylish outfit recommendation to go with these shoes: "${product.name}". Describe a complete look including top, bottoms, and accessories. Keep it concise and to one sentence.`;
+            const responseText = await this.callGeminiAPI(prompt);
+            product.outfit = responseText;
+            this.loadingId = null;
+        }
+      };
+    }
+  </script>
+
+  <!-- Ensure lucide icons render after Alpine mounts -->
+  <script>
+    document.addEventListener('alpine:init', () => {
+      setTimeout(() => { if(window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons(); }, 50);
+    });
+  </script>
+</body>
+</html>
